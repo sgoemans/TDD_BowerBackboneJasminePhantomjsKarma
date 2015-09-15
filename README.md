@@ -53,6 +53,27 @@ Note: The ignore property in the bower.json file does not ignore files when you 
 #####3) Create a basic testrunner html file for running your unit tests
 
 In a Single Page Application (SPA) you usually have only one html file which is called index.html. This file loads all your Javascript and CSS files for running your application. It does not contain any unit testing modules like Jasmine, Sinon, Karma, PhantomJS and so on. Since testing happens independantly from running your application, a seperate .html file is necessary which specifies not only your application modules but also your testing frameworks and test (spec) files. In our example, we put this html file into the test subdirectory of our project and call it test.html.
+````<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Backbone Testing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <!-- Distribution libraries -->
+    <!-- Application modules - your javascript app files to be included
+    here-->
+    <!-- DevDependencies for testing -->
+    <link rel="shortcut icon" type="image/png" href="../bower_components/jasmine/images/jasmine_favicon.png">
+    <link rel="stylesheet" href="../bower_components/jasmine/lib/jasmine-core/jasmine.css"/>
+    <script src="../bower_components/jasmine/lib/jasmine-core/jasmine.js"></script>
+    <script src="../bower_components/jasmine/lib/jasmine-core/jasmine-html.js"></script>
+    <script src="../bower_components/jasmine/lib/jasmine-core/boot.js"></script>
+    <!-- Spec files - javascript test files to be added here-->
+    <script src="js/spec/namespace.spec.js"></script>
+</head>
+<body>
+</body>
+</html>````
 
 #####4) Write your first test against the project's namespace and watch them fail
 This simple test makes sure that you defined your javascript namespace in the global namespace. The namespace we want to use in this tutorial is "App" for our Backbone classes and "app" for object instancies. In case any other javascript module/library that we use employs variables with the same name, the following code will merge our namespace with it, hopefully not breaking anything in the foreign module's functionality. In most cases, these two variables are for our exclusive use, so they are undefined at the beginning. As you can see, we already reserve
