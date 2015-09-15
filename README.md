@@ -53,6 +53,7 @@ Note: The ignore property in the bower.json file does not ignore files when you 
 #####3) Create a basic testrunner html file for running your unit tests
 
 In a Single Page Application (SPA) you usually have only one html file which is called index.html. This file loads all your Javascript and CSS files for running your application. It does not contain any unit testing modules like Jasmine, Sinon, Karma, PhantomJS and so on. Since testing happens independantly from running your application, a seperate .html file is necessary which specifies not only your application modules but also your testing frameworks and test (spec) files. In our example, we put this html file into the test subdirectory of our project and call it test.html.
+
 ````<!DOCTYPE html>
 <html>
 <head lang="en">
