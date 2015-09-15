@@ -1,5 +1,4 @@
-# TDD_BowerBackboneJasminePhantomjsKarma
-An introduction to TDD style in a Backbone applcation project
+An introduction to TDD style in a Backbone application project
 ==================
 
 Building a Backbone application from grounds up using TDD
@@ -31,9 +30,10 @@ Install nodejs from http://nodejs.org/
 
 Install bower globally (````npm install -g bower````)
 
-1) Create a project layout directory structure
+####Tutorial
+#####1) Create a project layout directory structure
 
-2) Package management with Bower: Create the config file ```bower.json```
+#####2) Package management with Bower: Create the config file ```bower.json```
 
 Bowers main configuration file is called bower.json. Make sure you put the bower.json file in the project's root folder as in the example
 project layout above. The two most important attributes in bower.json are dependencies and devDependencies. As long as you are in the
@@ -47,3 +47,17 @@ parameter. Examples:
 ````bower install -p  // will install only the modules listed under dependendies````
 
 ````bower install  // will install all modules listed under both dependencies and devDependencies````
+
+Note: The ignore property in the bower.json file does not ignore files when you do a bower install. Installing bower components with "bower install" will unanonymously copy the whole Git repository of this component. The ignore property comes into play if you commit your code to Git. This is the time when your ignore settings are evaluated.
+
+#####3) Create a basic testrunner html file for running your unit tests
+
+In a Single Page Application (SPA) you usually have only one html file which is called index.html. This file loads all your Javascript and CSS files for running your application. It does not contain any unit testing modules like Jasmine, Sinon, Karma, PhantomJS and so on. Since testing happens independantly from running your application, a seperate .html file is necessary which specifies not only your application modules but also your testing frameworks and test (spec) files. In our example, we put this html file into the test subdirectory of our project and call it test.html.
+
+#####4) Write your first test against the project's namespace and watch them fail
+This simple test makes sure that you defined your javascript namespace in the global namespace. The namespace we want to use in this tutorial is "App" for our Backbone classes and "app" for object instancies. In case any other javascript module/library that we use employs variables with the same name, the following code will merge our namespace with it, hopefully not breaking anything in the foreign module's functionality. In most cases, these two variables are for our exclusive use, so they are undefined at the beginning. As you can see, we already reserve
+sub-namespaces for our Backbone components; 
+Model
+Collection
+View
+Router
