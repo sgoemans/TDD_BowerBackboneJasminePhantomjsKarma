@@ -5,16 +5,21 @@
     <title>Backbone Testing</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
     <!-- Distribution libraries -->
-    <!-- Application modules - your javascript app files to be included
-    here-->
+    <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="../bower_components/underscore/underscore.js"></script>
+    <script src="../bower_components/backbone/backbone.js"></script>
+    <!-- Application modules - your javascript app files to be included here-->
+    <script src="../app/js/namespace.js"></script>
+    <script src="../app/js/models/noteModel.js"></script>
     <!-- DevDependencies for testing -->
     <link rel="shortcut icon" type="image/png" href="../bower_components/jasmine/images/jasmine_favicon.png">
-    <link rel="stylesheet" href="../bower_components/jasmine/lib/jasmine-core/jasmine.css"/>
+    <link rel="stylesheet" href="../bower_components/jasmine/lib/jasmine-core/jasmine.css" />
     <script src="../bower_components/jasmine/lib/jasmine-core/jasmine.js"></script>
     <script src="../bower_components/jasmine/lib/jasmine-core/jasmine-html.js"></script>
-    <script src="../bower_components/jasmine/lib/jasmine-core/boot.js"></script>
+    <script type="text/javascript" src="../bower_components/jasmine/lib/jasmine-core/boot.js"></script>
     <!-- Spec files - javascript test files to be added here-->
-    <script src="js/specs/namespace.spec.js"></script>
+    <!-- <script src="js/specs/namespace.spec.js"></script> -->
+    <script src="js/specs/noteModel.spec.js"></script>
 </head>
 <body>
 </body>
