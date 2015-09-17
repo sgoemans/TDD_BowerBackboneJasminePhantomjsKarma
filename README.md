@@ -149,3 +149,49 @@ See how the namespace.js file has to be included in test.html:
 </body>
 </html>
 ```
+As you can see above, we run our first tests against the namespace.js file:
+`<script src="../app/js/namespace.js"></script>`
+
+#####) Write your first Backbone model tests and watch them fail
+Its always a good idea to think about what your application modules are all about before you start wiriting code. For the notes application which
+we have in mind here, we want to create, edit and delete notes. In addition, we want to store and retrieve/display the notes details. The most
+basic functionality of a notes application would be to store the notes title, its detailed text, a creation date, and a priority. This already sounds
+like a good data model for our notes application. Having this data model in mind, what could we test of a Backbone representation of this data
+model? First of all, the most basic test is verifying that the model instance is defined and that its defaults have been set properly. We create the
+model's instance in the `beforeEach()` method of the test which is run before every single test using `it()`. Usually, its a good idea to delete or
+destroy the objects instance after each test, but we omitt this for now.
+```
+describe("App.Models.Note", function () {
+  beforeEach(function() {
+    this.model = new App.Models.Note();
+  });
+  it("should be defined", function () {
+    expect(App.Models.Note).toBeDefined();
+  });
+  it("should have appropriate default values", function () {
+    expect(this.model.get('title')).toEqual('');
+    expect(this.model.get('text')).toEqual('*Edit your note*');
+    expect(this.model.get('createdAt') instanceof Date).toBeTruthy();
+  });
+});
+```
+This was an easy task. Let's think about a more complex test scenario. Backbone relies on asynchronous execution of many of its functions. A simple change of a model's attribute can already trigger an event that your application can respond to. To test this capability, see the following test:
+```
+  it("can trigger a change event", function (done) {
+    var self = this;
+    // Event that is triggered by changing the model's title
+    this.model.once("change:title", function () {
+      expect(self.model.get('title')).toEqual("My Title");
+      done();
+    });
+    // Make our note trigger a change event
+    this.model.set({ title: "My Title" });
+  });
+```
+This is definitely a more advanced techniques. To put it simple, we create an asynchronous test by calling the function `this.mode.once()` (similar to `this.model.on()`). The callback that is specified in its arguments will be called as soon as the Backbone model detects a change in one of
+its attributes. If we specify a particular attribute, like we did in the example above, the trigger only fires when this attribute is changed.  
+Note: Jasmine allows an argument in the `it()` function argument. If present, this argument is set by Jasmine to a callback function which signals the end of the test's
+execution. Even if the `it()` block's code processing reaches the end in line 10, the test is only considered to have finished when the `done()` function in line 6 has been called. But this only happens if an asychronous call of the callback function argument in the `this.model.once()` method occured.
+We need to update our test runner html file in order for this test to run. To get the namespace tests out of the way, we comment them out. Then the
+new test is included in line 31 which we name `noteModel.spec.js`. Since this is our first test which makes use of Backbone, we need to
+include Backbone and its dependencies `jquery` and `underscore`.
