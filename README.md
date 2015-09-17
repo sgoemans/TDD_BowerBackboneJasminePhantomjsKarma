@@ -175,7 +175,7 @@ describe("App.Models.Note", function () {
   });
 });
 ```
-This was an easy task. Let's think about a more complex test scenario. Backbone relies on asynchronous execution of many of its functions. A simple change of a model's attribute can already trigger an event that your application can respond to. To test this capability, see the following test:
+This was quite simple. Let's think about a more complex test scenario. Backbone relies on asynchronous execution of many of its functions. A simple change of a model's attribute can already trigger an event that your application can respond to. To test this capability, see the following test:
 ```
   it("can trigger a change event", function (done) {
     var self = this;
@@ -192,6 +192,49 @@ This is definitely a more advanced techniques. To put it simple, we create an as
 its attributes. If we specify a particular attribute, like we did in the example above, the trigger only fires when this attribute is changed.  
 Note: Jasmine allows an argument in the `it()` function argument. If present, this argument is set by Jasmine to a callback function which signals the end of the test's
 execution. Even if the `it()` block's code processing reaches the end in line 10, the test is only considered to have finished when the `done()` function in line 6 has been called. But this only happens if an asychronous call of the callback function argument in the `this.model.once()` method occured.
-We need to update our test runner html file in order for this test to run. To get the namespace tests out of the way, we comment them out. Then the
+We need to update our test runner html file in order for this test to run. To get the namespace test out of the way, we comment it out. Then the
 new test is included in line 31 which we name `noteModel.spec.js`. Since this is our first test which makes use of Backbone, we need to
-include Backbone and its dependencies `jquery` and `underscore`.
+include Backbone and its dependent `jquery` and `underscore` libraries.
+```
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Backbone Testing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <!-- Distribution libraries -->
+    <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="../bower_components/underscore/underscore.js"></script>
+    <script src="../bower_components/backbone/backbone.js"></script>
+    <!-- Application modules - your javascript app files to be included here-->
+    <script src="../app/js/namespace.js"></script>
+    <script src="../app/models/noteModel.js"></script>
+    <!-- DevDependencies for testing -->
+    <link rel="shortcut icon" type="image/png" href="../bower_components/jasmine/images/jasmine_favicon.png">
+    <link rel="stylesheet" href="../bower_components/jasmine/lib/jasmine-core/jasmine.css" />
+    <script src="../bower_components/jasmine/lib/jasmine-core/jasmine.js"></script>
+    <script src="../bower_components/jasmine/lib/jasmine-core/jasmine-html.js"></script>
+    <script type="text/javascript" src="../bower_components/jasmine/lib/jasmine-core/boot.js"></script>
+    <!-- Spec files - javascript test files to be added here-->
+    <!-- <script src="js/specs/namespace.spec.js"></script> -->
+    <script src="js/specs/noteModel.spec.js"></script>
+</head>
+<body>
+</body>
+</html>
+```
+When we run the tests, we will get quite a few errors, not just test failing errors, but also program errors because of undefined objects which we tried to use without being defined.
+
+7) Write your Backbone model file and see your tests succeed
+According to the test failures, we need to define our model with default values. According to our model test spec, the `title` attribute must exist but be an empty string. The `text` attribute is tested against the value '*Edit your note*', so this must be its default value. The `createdAt` attribute obviously must hold a value of
+type date. In summary, our model looks like this:
+```
+App.Models.Note = Backbone.Model.extend({
+  defaults: {
+    title: '',
+    text: '*Edit your note*',
+    createdAt: new Date()
+  }
+});
+```
+Just add the line  `&lt;script src="../app/js/note.js">&lt;/script>` under your Application modules section of your test.html file and you are done. When running the tests again, you should see the Jasmine output like in `screenshots/jasmine3.PNG`:
