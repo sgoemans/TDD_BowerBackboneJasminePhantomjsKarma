@@ -237,4 +237,4 @@ App.Models.Note = Backbone.Model.extend({
   }
 });
 ```
-Just add the line  `&lt;script src="../app/js/note.js">&lt;/script>` under your Application modules section of your test.html file and you are done. When running the tests again, you should see the Jasmine output like in `screenshots/jasmine3.PNG`:
+Just add the line `<script src="../app/js/note.js"></script>` under your Application modules section of your test.html file and you are done. When running the tests again, you should see the Jasmine output like in `screenshots/jasmine3.PNG`:
