@@ -27,7 +27,7 @@ found in chapter 6.
 ####Prerequisites
 Install nodejs from http://nodejs.org/
 
-Install bower globally (```npm install -g bower```)
+Install bower globally (`npm install -g bower`)
 
 ####Tutorial
 #####1) Create a project layout directory structure
@@ -41,7 +41,7 @@ Install bower globally (```npm install -g bower```)
     |---js
         |---specs
 ```
-#####2) Package management with Bower: Create the config file ```bower.json```
+#####2) Package management with Bower: Create the config file `bower.json`
 
 Bowers main configuration file is called bower.json. Make sure you put the bower.json file in the project's root folder as in the example
 project layout above. The two most important attributes in bower.json are dependencies and devDependencies. As long as you are in the
@@ -89,7 +89,63 @@ In a Single Page Application (SPA) you usually have only one html file which is 
 #####4) Write your first test against the project's namespace and watch them fail
 This simple test makes sure that you defined your javascript namespace in the global namespace. The namespace we want to use in this tutorial is "App" for our Backbone classes and "app" for object instancies. In case any other javascript module/library that we use employs variables with the same name, the following code will merge our namespace with it, hopefully not breaking anything in the foreign module's functionality. In most cases, these two variables are for our exclusive use, so they are undefined at the beginning. As you can see, we already reserve
 sub-namespaces for our Backbone components; 
-Model
-Collection
-View
-Router
+* Model
+* Collection
+* View
+* Router
+```
+describe("Namespace ", function () {
+  it("should include 'App' object", function () {
+    expect(App).toBeDefined();
+    expect(App.Views).toBeDefined();
+    expect(App.Models).toBeDefined();
+    expect(App.Collections).toBeDefined();
+    expect(App.Routers).toBeDefined();
+  });
+  it("should include the 'app' object", function() {
+    expect(app).toBeDefined();
+  })
+});
+```
+The only spec file you currently need in your test.html file is `<script src="js/spec/namespace.spec.js"></script>`. If you open
+the test.html file in your browser (in Webstorm, look at the test.html file and hover your mouse pointer over the upper right corner, where
+the browser icons will appear and you click on your preferred browser). The output should look like the image in `screenshots/jasmine1.PNG`.
+
+#####5) Define the project's namespace in your first app file and make your tests pass
+Now its a good time to make the namespace specs pass. To accomplish this, we just need to create a javascript file which initializes the
+namespace variables. Then we include this file in the &lt;script> tags of our test.html file and repeat the tests.
+First we write our namespace module called namepsace.js and put it in our project folder app/js.
+```
+var App = App || {};
+App.Views || (App.Views = {});
+App.Models || (App.Models = {});
+App.Collections || (App.Collections = {});
+App.Routers || (App.Routers = {});
+App.Config || (App.Config = {});
+App.Templates || (App.Templates = {});
+var app = app || {};
+```
+See how the namespace.js file has to be included in test.html:
+```
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="UTF-8">
+<title>Backbone Testing</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<!-- Distribution libraries -->
+<!-- Application modules - your javascript app files to be included here-->
+<script src="../app/js/namespace.js"></script>
+<!-- DevDependencies for testing -->
+<link rel="shortcut icon" type="image/png" href="../bower_components/jasmine/images/jasmine_favicon.png">
+<link rel="stylesheet" href="../bower_components/jasmine/lib/jasmine-core/jasmine.css" />
+<script src="../bower_components/jasmine/lib/jasmine-core/jasmine.js"></script>
+<script src="../bower_components/jasmine/lib/jasmine-core/jasmine-html.js"></script>
+<script type="text/javascript" src="../bower_components/jasmine/lib/jasmine-core/boot.js"></script>
+<!-- Spec files - javascript test files to be added here-->
+<script src="js/specs/namespace.spec.js"></script>
+</head>
+<body>
+</body>
+</html>
+```
