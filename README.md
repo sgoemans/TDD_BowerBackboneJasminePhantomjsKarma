@@ -6,9 +6,8 @@ Building a Backbone application from grounds up using TDD
 
 ####Introduction
 This page will introduce you to common project layouts and best practice when developing an application from grounds up. In this example, we'll
-use the Test Driven Development approach, which basically enforces you to write tests firsts before coding your app modules. The workflow
-described in this wiki article can be applied to all your Backbone applications which need a package manager to handle your Javascript libraries
-(Bower). For the TDD approach we'll use Jasmine as our unt testing framework. Therefore, our project implementation steps look like this:
+use the Test Driven Development approach, which basically enforces you to write tests first before coding the corresponding app modules. The workflow
+described in this wiki article can be applied to all your Backbone applications. For the TDD approach we'll use Jasmine as our unit testing framework. Therefore, our project implementation steps look like this:
 #####1) Create a project layout directory structure
 #####2) Define the required Javascript libraries/frameworks and put them in a bower.json config file.
 #####3) Create a basic testrunner html file for running your unit tests
@@ -32,7 +31,16 @@ Install bower globally (```npm install -g bower```)
 
 ####Tutorial
 #####1) Create a project layout directory structure
-
+```TDDexampleProject
+|---app
+    |---js
+        |---models
+        |---collections
+        |---views
+|---test
+    |---js
+        |---specs
+```
 #####2) Package management with Bower: Create the config file ```bower.json```
 
 Bowers main configuration file is called bower.json. Make sure you put the bower.json file in the project's root folder as in the example
