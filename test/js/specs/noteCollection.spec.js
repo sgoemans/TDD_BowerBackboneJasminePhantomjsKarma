@@ -59,4 +59,28 @@ describe('App.Collections.Notes', function() {
             expect(note).toBeDefined();
         });
     });
+    describe('fired events', function() {
+        it('fires the "add" event on create', function(done) {
+            var self = this;
+            this.notes.once('add', function() {
+                expect(self.notes.length).toEqual(1);
+                done();
+            });
+            this.notes.create({
+                title: "Test note #2",
+                text: "A newly created note."
+            });
+        });
+        it('fires the "sync" event on create', function(done) {
+            var self = this;
+            this.notes.once('sync', function() {
+                expect(self.notes.length).toEqual(1);
+                done();
+            });
+            this.notes.create({
+                title: "Test note #3",
+                text: "Again a newly created note."
+            });
+        });
+    });
 })

@@ -46,12 +46,67 @@ Install bower globally (`npm install -g bower`)
 ```
 #####2) Package management with Bower: Create the config file `bower.json`
 
-Bowers main configuration file is called bower.json. Make sure you put the bower.json file in the project's root folder
-as in the example project layout above. The two most important attributes in bower.json are dependencies and
-devDependencies. As long as you are in the development process, you probably need both dependencies and devDependencies
+Bower's main configuration file is called bower.json. Make sure you put the bower.json file in the project's root folder.
+For this tutorial, the following bower.json is needed:
+
+```
+{
+  "name": "TDD _BowerBackboneJasminePhantomjsKarma Tutorial",
+  "version": "0.0.1",
+  "homepage": "https://github.com/sgoemans/TDD_BowerBackboneJasminePhantomjsKarma",
+  "authors": [
+    "Stephan Goemans <quizdroid@gmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sgoemans/TDD_BowerBackboneJasminePhantomjsKarma"
+  },
+  "description": "TDD with Backbone",
+  "main": "index.html",
+  "keywords": [
+    "backbone.js",
+    "localStorage",
+    "testing",
+    "jasmine",
+    "sinon"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test"
+  ],
+  "dependencies": {
+    "jquery": "*",
+    "backbone": "*",
+    "backbone.localStorage": "*",
+    "underscore": "*",
+    "bootstrap": "*",
+    "handlebars": "*",
+    "showdown": "*"
+  },
+  "devDependencies": {
+    "jasmine": "*",
+    "sinonjs": "*",
+    "jasmine-sinon": "*"
+  }
+}
+```
+
+The two most important attributes in bower.json are `dependencies` and
+`devDependencies`. As long as you are in the development process, you probably need both dependencies and devDependencies
 resolved. This means, if you do a "bower install", bower will copy the corresponding Git repositories into the
-bower-components folder which is created if it doesn't already exist in your project folder. If you want Bower to use
-another directory to store the dependant javascript libraries to, just create a .bowerrc file and specify a directory.
+`bower-`components folder which is created if it doesn't already exist in your project folder. If you want Bower to use
+another directory to store the javascript libraries to, just create a `.bowerrc` file and specify a directory. Example:
+
+```
+{
+  "directory": "app/components/",
+}
+```
+
 If your final module will be used by another development team, make sure you put all testing and other non-app libraries
 or frameworks into the devDependencies section. The modules listed in there will not be installed when you enter the
 bower install command with the -p or --production parameter. Examples:
@@ -66,7 +121,7 @@ comes into play if you commit your code to Git. This is the time when your ignor
 
 #####3) Create a basic testrunner html file for running your unit tests
 
-In a Single Page Application (SPA) you usually have only one html file which is called index.html. This file loads all
+In a Single Page Application (SPA) you usually have only one html file which is called `index.html`. This file loads all
 your Javascript and CSS files for running your application. It does not contain any unit testing modules like Jasmine,
 Sinon, Karma, PhantomJS and so on. Since testing happens independantly from running your application, a seperate .html
 file is necessary which specifies not only your application modules but also your testing frameworks and test (spec)
@@ -318,10 +373,10 @@ App.Models.Note = Backbone.Model.extend({
 A typical set of collection tests should verify that:
 * Collection objects can be created with or without initializing them with model objects
 * Model objects can be added and removed from a collection
-* Events are triggered on container and model changes
+* Events are triggered on collection and model changes
 * Data is appropriately synchronized with the backend
 Let us begin with a simple collection creation test. For simplicity sake, we do not employ a full blown data server
-(REST) here, but rely on a simple WebStorage addin for Backbone, called ´Backbone.LocalStorage´. The specrunner test.html
+(REST) here, but rely on a WebStorage addin for Backbone, called ´Backbone.LocalStorage´. The specrunner test.html
 now looks like this:
 
 ```
@@ -457,7 +512,7 @@ describe('App.Collections.Notes', function() {
 ```
 
 When running the above spec file, we'll get a lot of errors because of missing objects like App.Collections.Notes
-or App.Models.Note object. We'll start implementing our noteCollection.js module. We need to include a reference
+or App.Models.Note object. We'll now start implementing our noteCollection.js module. It needs to include a reference
 to the localstorage library in it:
 
 ```
@@ -469,3 +524,96 @@ App.Collections.Notes = Backbone.Collection.extend({
 
 In fact, this is already sufficient for our tests to pass. Just comment out the noteCollection.js script entry from our
 specrunner and that's it. The test output should look like in `/screenshots/jasmine6.PNG`.
+
+When we want to test adding models to a collection, events are triggered during the create / save process which we can
+run tests against, too. So in the next example, we'll add a new test suite where we'll create new models and add them to
+the collection and check that corresponding events were properly triggered.
+
+```
+describe('fired events', function() {
+  it('fires the "add" event on create', function(done) {
+    var self = this;
+    this.notes.once('add', function() {
+      expect(self.notes.length).toEqual(1);
+      done();
+    });
+    this.notes.create({
+      title: "Test note #2",
+      text: "A newly created note."
+    });
+  });
+  it('fires the "sync" event on create', function(done) {
+    var self = this;
+    this.notes.once('sync', function() {
+      expect(self.notes.length).toEqual(1);
+      done();
+    });
+    this.notes.create({
+      title: "Test note #3",
+      text: "Again a newly created note."
+    });
+  });
+});
+```
+
+To be honest, what we've tested on Backbone collections so far is merely testing against basic Backbone functionality.
+In a real world scenario, testing would focus on properly nested collection or triggering custom events.
+
+#####9) Our first Backbone view tests
+Views frequently have the most dependencies of any Backbone.js component. Views can contain references to models,
+collections, templates, routers, and child/helper views. Accordingly, we will have to mock or patch dependencies
+to isolate views and/or provide partial dependencies in our tests.
+For all application views, we will want to verify that:
+* Views can render the target HTML, binding model data to a template string
+* View objects provided with an el property get added to the DOM on creation
+* View methods correctly bind to DOM and Backbone.js events, and respond appropriately
+* Objects contained by a view (for example, subviews and models) are properly disposed on the view removal
+
+Now, for the first time, our tests will generate DOM output. In order to prevent causing havoc to our DOM engine by
+adding dozens of test fixtures to our <body> element, we will use a specific <div> element and add all our test html
+output to it. The code below might be a little bit confusing, so lets go through it line by line. Line 3 creates a
+jQuery object and stores it in a variable called $fixture. In the `beforeEach()` block, we create a <div> element
+(line 6) in an empty document body. In line 8 we attach the jQuery object $fixture to it. Now that the $fixture object has
+become part of the DOM, we can freely use it four our testing purposes. Then we create our Backbone view with the $fixture
+DOM element which the view takes responsibility for and a model which holds the data for the view. (line 11 - 13).
+
+```
+describe("App.Views.NoteView", function() {
+  // Create test fixture.
+  this.$fixture = $("<div id='note-view-fixture'></div>");
+  var self = this;
+  beforeEach(function() {
+    $(document.body).html($('<div id="fixtures"></div>'));
+    // Empty out and rebind the fixture for each run.
+    self.$fixture.empty().appendTo($("#fixtures"));
+    // New default model and view for each test.
+    // Creation calls `render()`, so in tests we have an *already rendered* view.
+    self.view = new App.Views.NoteView({
+      el: self.$fixture,
+      model: new App.Models.Note({'title': 'My Title'})
+    });
+  });
+  afterEach(function () {
+    // Destroying the model also destroys the view.
+    self.view.model.destroy();
+  });
+  it("can render more complicated markdown", function (done) {
+    self.view.model.once("change", function () {
+    var $title = $("#pane-title"),
+        $text = $("#pane-text");
+    // Our new (changed) title.
+    expect($title.text()).toEqual("My Title");
+      // Rendered Markdown with headings, list.
+      expect($text.html()).toContain("My Heading</h2>");
+      expect($text.html()).toContain("<ul>");
+      expect($text.html()).toContain("<li>List item 2</li>");
+      done();
+    });
+    // Make our note a little more complex.
+    self.view.model.set({
+      title: "My Title",
+      text: "## My Heading\n" + "* List item 1\n" + "* List item 2"
+    });
+  });
+});
+```
